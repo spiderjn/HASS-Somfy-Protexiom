@@ -37,6 +37,7 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
 
 def set_arm_state(state, hass, somfy, code=None):
     """Send set arm state command."""
+    _LOGGER.debug("########## Somfy set arm state  ################")
     _LOGGER.debug("Somfy set arm state %s", state)
     ACTIVATION_ALARM_CODE = hass.data[SOMFY_DOMAIN]["activation_alarm_code"]
 
@@ -106,7 +107,7 @@ class SomfyAlarm(alarm.AlarmControlPanel):
     def update(self):
         """Update alarm status."""
         state = self._hass.data[SOMFY_DOMAIN]["state"]
-        if state['alarm'] == "Pas d'alarme" :
+        if state['alarm'] == "Pas d'alarme\n" :
             self._state = STATE_ALARM_DISARMED
         else:
             self._state = STATE_ALARM_ARMED_AWAY

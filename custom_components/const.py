@@ -31,11 +31,11 @@ SENSOR_TYPES = {
 }
 
 SENSOR_STATE = {
-    "battery": {"Piles OK": STATE_OFF,"Piles faibles": STATE_ON},
-    "communication": {"other_state": STATE_OFF,"Communication radio OK": STATE_ON},
-    "door": {"Porte ou fenêtre fermée": STATE_OFF,"Porte ou fenêtre ouverte": STATE_ON},
-    "alarm": {"Pas d'alarme": STATE_OFF,"Alarme Intrusion": STATE_ON, "itemhouseok": STATE_OFF},
-    "material": {"other_state": STATE_OFF,"Boîtier OK": STATE_ON},
+    "battery": {"Piles OK\n": STATE_OFF,"Piles faibles\n": STATE_ON},
+    "communication": {"other_state": STATE_OFF,"Communication radio OK\n": STATE_ON},
+    "door": {"Porte ou fenêtre fermée\n": STATE_OFF,"Porte ou fenêtre ouverte\n": STATE_ON},
+    "alarm": {"Pas d'alarme\n": STATE_OFF,"Alarme Intrusion": STATE_ON, "itemhouseok": STATE_OFF},
+    "material": {"other_state": STATE_OFF,"Boîtier OK\n": STATE_ON},
     "zone_a": {"OFF": STATE_ON,"ON": STATE_OFF},
     "zone_b": {"OFF": STATE_ON,"ON": STATE_OFF},
     "zone_c": {"OFF": STATE_ON,"ON": STATE_OFF},

@@ -35,12 +35,14 @@ class Somfy:
         self.logout()
 
     def login(self):
-        login_response = self.browser.open(self.url + "/m_login.htm")
+#        login_response = self.browser.open(self.url + "/m_login.htm")  # "/fr/login.htm"
+        login_response = self.browser.open(self.url + "/fr/login.htm")
         login_html = login_response.read()
-        # print(login_html)
+        
+#        print(login_html)
 
         login_soup = self._beautiful_it_and_check_error(login_html)
-        authentication_code = login_soup.find('form').find('table').findAll('tr')[5].findAll('b')[0].find(text=True)
+        authentication_code = login_soup.find('form').find('table').findAll('tr')[2].findAll('b')[0].find(text=True)
 
         self.browser.select_form(nr=0)
         self.browser["password"] = self.password
@@ -50,54 +52,78 @@ class Somfy:
         self.browser.submit()
 
     def logout(self):
-        self.browser.open(self.url + "/m_logout.htm")
+        self.browser.open(self.url + "/logout.htm")
 
     def set_zone_a(self):
-        self.browser.open(self.url + "/mu_pilotage.htm")
-        self.browser.select_form(nr = 0)
-        self.browser.submit()
+ #       self.browser.open(self.url + "/mu_pilotage.htm")
+        self.browser.open(self.url + "/fr/u_pilotage.htm")
+        self.browser.select_form(nr =0)
+        self.browser.submit(name='btn_zone_on_A')
 
     def set_zone_b(self):
-        self.browser.open(self.url + "/mu_pilotage.htm")
-        self.browser.select_form(nr = 1)
-        self.browser.submit()
+#        self.browser.open(self.url + "/mu_pilotage.htm")
+        self.browser.open(self.url + "/fr/u_pilotage.htm")
+        self.browser.select_form(nr =0)
+        self.browser.submit(name='btn_zone_on_B')
 
     def set_zone_c(self):
-        self.browser.open(self.url + "/mu_pilotage.htm")
-        self.browser.select_form(nr = 2)
-        self.browser.submit()
+#        self.browser.open(self.url + "/mu_pilotage.htm")
+        self.browser.open(self.url + "/fr/u_pilotage.htm")
+        self.browser.select_form(nr =0)
+        self.browser.submit(name='btn_zone_on_C')
 
     def set_all_zone(self):
-        self.browser.open(self.url + "/mu_pilotage.htm")
-        self.browser.select_form(nr =3)
-        self.browser.submit()
-
+#        self.browser.open(self.url + "/mu_pilotage.htm")
+        self.browser.open(self.url + "/fr/u_pilotage.htm")
+        self.browser.select_form(nr =0)
+        self.browser.submit(name='btn_zone_on_ABC')
+ 
     def unset_all_zone(self):
-        self.browser.open(self.url + "/mu_pilotage.htm")
-        self.browser.select_form(nr =4)
-        self.browser.submit()
+#        self.browser.open(self.url + "/mu_pilotage.htm")
+        self.browser.open(self.url + "/fr/u_pilotage.htm")
+        self.browser.select_form(nr =0)
+        self.browser.submit(name='btn_zone_off_ABC')
 
     def get_state(self):
-        state_response = self.browser.open(self.url + "/mu_etat.htm")
+        # status.xml
+        # /fr/u_listelmt.htm
+#        state_response = self.browser.open(self.url + "/mu_etat.htm")
+        state_response = self.browser.open(self.url + "/fr/u_pilotage.htm")
+        
         state_html = state_response.read()
-
+        
+ #       print(state_html)
+        
         state_soup = self._beautiful_it_and_check_error(state_html)
-        result = self.get_general_state(state_soup.findAll('table')[0])
-        result.update(self.get_zone_state(state_soup.findAll('table')[0]))
+
+ #       print(state_soup)
+
+        result = self.get_general_state(state_soup)
+        
+        result.update(self.get_zone_state(state_soup))
 
         return result
 
     def get_zone_state(self, state_soup):
-        zone_state = state_soup.findAll('table')[2].findAll('tr')
-
+ 
         def get_zone_a():
-            return { "zone_a" : zone_state[0].find(text=True) }
+            if ( state_soup.findAll('div')[25].find(text=True).find('Arr')==0):
+                return { "zone_a" : "ON" }
+            else:
+                return { "zone_a" : "OFF" }
+
 
         def get_zone_b():
-            return { "zone_b" : zone_state[1].find(text=True) }
+            if ( state_soup.findAll('div')[28].find(text=True).find('Arr')==0):
+                return { "zone_b" : "ON" }
+            else:
+                return { "zone_b" : "OFF" }
 
         def get_zone_c():
-            return { "zone_c" : zone_state[2].find(text=True) }
+            if ( state_soup.findAll('div')[31].find(text=True).find('Arr')==0):
+                return { "zone_c" : "ON" }
+            else:
+                return { "zone_c" : "OFF" }
 
         result = get_zone_a()
         result.update(get_zone_b())
@@ -106,22 +132,21 @@ class Somfy:
         return result
 
     def get_general_state(self, state_soup):
-        general_state = state_soup.findAll('table')[1].findAll('tr')
-
+ 
         def get_battery_state():
-            return { "battery" : general_state[0].find(text=True) }
+            return { "battery" : state_soup.findAll('div')[12].findAll('div')[3].find(text=True) }
 
         def get_communication_state():
-            return { "communication" : general_state[1].find(text=True) }
+            return { "communication" : state_soup.findAll('div')[12].findAll('div')[4].find(text=True) }
 
         def get_door_state():
-            return { u"door" : general_state[2].find(text=True) }
+            return { u"door" : state_soup.findAll('div')[12].findAll('div')[5].find(text=True) }
 
         def get_alarm_state():
-            return { "alarm" : general_state[4].find(text=True) }
+            return { "alarm" : state_soup.findAll('div')[12].findAll('div')[6].find(text=True) }
 
         def get_material_state():
-            return { "material" : general_state[6].find(text=True) }
+            return { "material" : state_soup.findAll('div')[12].findAll('div')[7].find(text=True) }
 
         result = get_battery_state()
         result.update(get_communication_state())
@@ -132,7 +157,7 @@ class Somfy:
         return result
 
     def get_elements(self):
-        state_response = self.browser.open(self.url + "/u_listelmt.htm")
+        state_response = self.browser.open(self.url + "/fr/u_listelmt.htm")
         state_html = state_response.read()
         state_soup = self._beautiful_it_and_check_error(state_html)
         result = state_soup.find("div", {"id": "itemlist"})
