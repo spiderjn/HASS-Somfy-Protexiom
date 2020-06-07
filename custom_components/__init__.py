@@ -11,7 +11,7 @@ from homeassistant.helpers import config_validation as cv, discovery
 from homeassistant.helpers.entity import Entity
 
 # from const import *
-from .const import DOMAIN, SENSOR_TYPES, SOMFY_COMPONENTS, SOMFY_DEVICES_TYPE, CONF_CODES, DEFAULT_SCAN_INTERVAL
+from .const import DOMAIN, SENSOR_TYPES, SOMFY_COMPONENTS, SOMFY_DEVICES_TYPE, CONF_CODES, DEFAULT_SCAN_INTERVAL, CONF_MODEL, DEFAULT_MODEL
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -31,6 +31,7 @@ CONFIG_SCHEMA = vol.Schema(
                     }
                 ),
                 vol.Optional(CONF_SCAN_INTERVAL, default=DEFAULT_SCAN_INTERVAL): cv.time_period,
+                vol.Optional(CONF_MODEL, default=DEFAULT_MODEL) :cv.string
             }
         )
     },
@@ -42,8 +43,11 @@ def setup(hass, config):
     url = config[DOMAIN][CONF_URL]
     password = config[DOMAIN][CONF_PASSWORD]
     codes = config[DOMAIN][CONF_CODES]
+    modele = config[DOMAIN][CONF_MODEL]
     _LOGGER.debug("codes :")
     _LOGGER.debug(codes)
+    _LOGGER.debug("Modele :")
+    _LOGGER.debug(modele)
     
     try: 
         somfy = Somfy(url, password, codes)

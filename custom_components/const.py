@@ -6,9 +6,12 @@ from homeassistant.const import (
 
 DOMAIN = 'protexiom'
 DEFAULT_SCAN_INTERVAL = timedelta(minutes=2)
+DEFAULT_MODEL ='P600V2009'
 SCAN_INTERVAL = timedelta(minutes=2)
 
+
 CONF_CODES = "codes"
+CONF_MODEL = "modele"
 
 SOMFY_COMPONENTS = ["sensor","binary_sensor", "alarm_control_panel"]
 SOMFY_DEVICES_TYPE = ["battery", "communication", "door", "alarm", "material", "zone_a", "zone_b", "zone_c"]

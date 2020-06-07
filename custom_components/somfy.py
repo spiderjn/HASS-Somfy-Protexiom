@@ -178,6 +178,7 @@ class Somfy:
 
         elements = {}
         for x in range(len(elt_code)):
+# skip typebadgerfid typedo typedm typekeyb typesirenext typesirenint typeremote4 typetrans
             elements[elt_code[x]]  = { 
                 "item_type" : item_type[x], 
                 "item_label" : item_label[x], 
@@ -190,7 +191,6 @@ class Somfy:
                 "elt_porte" : elt_porte[x],
                 "elt_zone" : elt_zone[x]
             }
-
         return  elements
 
     def _beautiful_it_and_check_error(self, html):
@@ -199,11 +199,16 @@ class Somfy:
         return soup
 
     def _check_error(self, soup):
-        if soup.find("div", {"class": "error"}):
+        #if soup.find("div", {"class": "error"}):
+        if soup.find('div', {'id': 'infobox'}):
+            _LOGGER.debug("########## Somfy Erreur  ################")
             error_code = soup.find('div').findAll('b')[0].find(text=True)
+            _LOGGER.debug("Somfy erreur : %s", error_code)
             if '(0x0904)' == error_code:
                 raise SomfyException("Nombre d'essais maximum atteint")
             if '(0x1100)' == error_code:
+                raise SomfyException("Code errone")
+            if '(0x0B00)' == error_code:
                 raise SomfyException("Code errone")
             if '(0x0902)' == error_code:
                 raise SomfyException("Session deja ouverte")
@@ -211,3 +216,6 @@ class Somfy:
                 raise SomfyException("Mauvais login/password")
             if '(0x0903)' == error_code:
                 raise SomfyException("Droit d'acces insuffisant")
+            if '(0x0805)' == error_code:
+                raise SomfyException("Connexion impossible, vérifier le branchement")
+            raise SomfyException("Connexion impossible, ERREUR INCONNUE")
